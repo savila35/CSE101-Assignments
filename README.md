@@ -30,12 +30,12 @@ git push
 git submodule update --init
 ``` 
 
-- We will announce the release of tests on regular basis. Once announced, run the following command to obtain the updated test files for specific assignment. This commead will update the local test files as well as the remote repository:
+- We will announce the release of tests on regular basis. Once announced, for each assignment you will need to run the following command to obtain the updated test files for specific assignment. This commead will update the local test files as well as the remote repository:
 
 ```bash
 git submodule update --remote
 git add cse-101-public-tests
-git commit -m “add pa{ID} cse-101-public-tests”
+git commit -m "add pa{ID} cse-101-public-tests"
 git push
 ```
 
