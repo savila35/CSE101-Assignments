@@ -6,3 +6,6 @@
 
 # Ignore shell script
 **.sh
+
+# Ignore misc
+**.DS_Store

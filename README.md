@@ -35,7 +35,7 @@ git submodule update --init
 ```bash
 git submodule update --remote
 git add cse-101-public-tests
-git commit -m "add pa{ID} cse-101-public-tests"
+git commit -m "add pa{ID} cse 101 public tests"
 git push
 ```
 
