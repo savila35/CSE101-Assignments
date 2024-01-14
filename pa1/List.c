@@ -73,14 +73,15 @@ List newList(void) {
 // Frees all heap memory associated with *pL, and sets *pL to NULL
 void freeList(List* pL) {
 	if (pL != NULL && *pL != NULL) {
-		while((*pL)->front != NULL) {
-			Node currNode = (*pL)->front;
-			(*pL)->front = (*pL)->front->next;
-			freeNode(&currNode);
+		Node current = (*pL)->front;
+		while(current != NULL) {
+			Node nextNode = current->next;
+			freeNode(&current);
+			current = nextNode;
 		}
+		free(*pL);
+		*pL = NULL;
 	}
-	free(pL);
-	*pL = NULL;
 }
 
 // Access functions ------------------------------------------------------------
@@ -102,7 +103,10 @@ int index(List L) {
 // front()
 // Returns front element of L. Pre: length()>0
 int front(List L) {
-	assert(length(L) > 0);
+	if (length(L) <=0 ) {
+		printf("List Error: calling front() on empty list\n");
+		exit(EXIT_FAILURE);
+	}
 	int front = L->front->data;
 	return(front);
 }
@@ -110,7 +114,57 @@ int front(List L) {
 // back()
 // Returns back element of L. Pre: length>0
 int back(List L) {
-	assert(length(L) > 0);
+	if (length(L) <=0 ) {
+		printf("List Error: calling back() on empty list\n");
+		exit(EXIT_FAILURE);
+	}
 	int back = L->back->data;
 	return(back);
 }
+
+// get()
+// Returns cursor element of L. Pre: length()>0, index()>=0.
+int get(List L) {
+	if (length(L) <= 0) {
+		printf("List Error: calling get() on empty list\n");
+		exit(EXIT_FAILURE);
+	}
+	if (index(L) < 0) {
+		printf("List Error: calling get() on undefined cursor\n");
+		exit(EXIT_FAILURE);
+	}
+	int cursor = L->cursor->data;
+	return(cursor);
+}
+
+// equals()
+// Returns true iff Lists A and B are in same state, and returns false 
+// otherwise.
+bool equals(List A, List B) {
+	Node a = A->front;
+	Node b = B->front;
+	while (a != NULL && b != NULL) {
+		if (a->data != b->data) {
+			return(false);
+		}
+		a = a->next;
+		b = b->next;
+	}
+	if (a != NULL || b != NULL) {
+		return(false);
+	}
+	return(true);
+}
+
+
+
+// Manipulation procedures -----------------------------------------------------
+
+// clear()
+// Resets L to its original empty state.
+void clear(List L) {
+	freeList(&L);
+	L = newList();
+}
+
+// set()
