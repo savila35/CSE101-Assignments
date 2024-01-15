@@ -61,10 +61,10 @@ void clear(List l);
 // overwrites the cursor element’s data with x. pre: length()>0, index()>=0
 void set(List l, int x);
 
-// movefront()
+// moveFront()
 // if l is non-empty, sets cursor under the front element, otherwise does 
 // nothing.
-void movefront(List l);
+void moveFront(List l);
 
 // moveBack()
 // If L is non-empty, sets cursor under the back element, otherwise does
@@ -112,4 +112,17 @@ void deleteBack(List L);
 // Delete cursor element, making cursor undefined. Pre: length()>0, index()>=0
 void delete(List L);
 
+
+// Other operations ------------------------------------------------------------
+
+// printList()
+// Prints to the file pointed to by out, a string representation of L consisting
+// of a space separated sequence of integers, with front on left.
+void printList(FILE* out, List L);
+
+// copyList()
+// Returns a new List representing the same integer sequence as L. The cursor in 
+// the new list is undefined, regardless of the state of the cursor in L. The 
+// state of L is unchanged
+List copyList(List L);
 #endif
