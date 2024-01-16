@@ -38,4 +38,3 @@ checkClient :
 
 checkLex :
 	valgrind --leak-check=full Lex in3 blah3
-
