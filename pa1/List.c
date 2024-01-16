@@ -1,4 +1,10 @@
 //------------------------------------------------------------------------------
+// Sebastian Avila
+// snavila
+// pa1
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
 // List.c
 // Implementation file for List ADT
 //------------------------------------------------------------------------------
@@ -163,8 +169,19 @@ bool equals(List A, List B) {
 // clear()
 // Resets L to its original empty state.
 void clear(List L) {
-	freeList(&L);
-	L = newList();
+	L->cursor = NULL;
+	L->cursorIndex = -1;
+	Node currNode = L->front;
+	Node nextNode;
+	while (currNode != NULL) {
+		nextNode = currNode->next;
+		freeNode(&currNode);
+		currNode = nextNode;
+	}
+	L->front = NULL;
+	L->back = NULL;
+	L->length = 0;
+	return;
 }
 
 // set()
@@ -381,9 +398,15 @@ void delete(List L) {
 		exit(EXIT_FAILURE);
 	}
 	Node n = L->cursor;
-	L->cursor->previous->next = L->cursor->next;
-	L->cursor->next->previous = L->cursor->previous;
-	freeNode(&n);
+	if (n == L->front) {
+		L->front = n->next;
+		freeNode(&n);
+
+	} else {
+		L->cursor->previous->next = L->cursor->next;
+		L->cursor->next->previous = L->cursor->previous;
+		freeNode(&n);
+	}
 	L->cursor = NULL;
 	L->cursorIndex = -1;
 	L->length--;
@@ -417,3 +440,21 @@ List copyList(List L) {
 	return(copy);
 }
 	
+// concatList()
+// Returns a new List which is the concatenation of A and B. The cursor in the
+// new list is undefined, reagrsdless of the states of the cursors in A and B.
+// The states of A and B are unchanged.
+List concatList(List A, List B) {
+	List L = newList();
+	Node N = A->front;
+	while (N != NULL) {
+		append(L, N->data);
+		N = N->next;
+	}
+	N = B->front;
+	while (N != NULL) {
+		append(L, N->data);
+		N = N->next;
+	}
+	return(L);
+}	

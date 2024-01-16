@@ -1,4 +1,10 @@
 //-----------------------------------------------------------------------------
+// Sebastian Avila
+// snavila
+// pa1
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 // List.h
 // Header file for List ADT
 //-----------------------------------------------------------------------------
@@ -125,4 +131,11 @@ void printList(FILE* out, List L);
 // the new list is undefined, regardless of the state of the cursor in L. The 
 // state of L is unchanged
 List copyList(List L);
+
+// concatList()
+// // Returns a new List which is the concatenation of A and B. The cursor in the
+// // new list is undefined, reagrsdless of the states of the cursors in A and B.
+// // The states of A and B are unchanged.
+List concatList(List A, List B);
+
 #endif
