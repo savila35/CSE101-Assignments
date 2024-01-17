@@ -33,8 +33,8 @@ List.o : List.c List.h
 clean :
 	rm -f Lex ListClient ListTest Lex.o ListClient.o List.o ListTest.o 
 
-checkClient : 
-	valgrind --leak-check=full ListClient
+checkTest : 
+	valgrind --leak-check=full ListTest
 
 checkLex :
 	valgrind --leak-check=full Lex in3 blah3

@@ -1,3 +1,11 @@
+//------------------------------------------------------------------------------
+// Sebastian Avila
+// snavila
+// 2024 Winter CSE101 pa1
+// ListTest.c
+// Test client for List ADT
+//-----------------------------------------------------------------------------
+
 #include <stdio.h>
 #include <assert.h>
 #include "List.h"
