@@ -94,5 +94,91 @@ int main(void) {
 	freeList(&list2);
 	freeList(&list3);
 	freeList(&list4);
+
+	List A = newList();
+	List B = newList();
+	prepend(A, 1);
+	prepend(B, 1);
+	prepend(A, 2);
+	prepend(B, 2);
+	deleteBack(A);
+	printf("A: ");
+	printList(stdout, A);
+	printf("\n");
+	printf("B: ");
+	printList(stdout, B);
+	if (equals(A, B))
+	printf("wrong\n");
+	deleteBack(B);
+	if (!equals(A, B))
+	printf("wrong\n");
+	deleteBack(B);
+
+	clear(A);
+
+	printf("A: ");
+	printList(stdout, A);
+	printf("\n");
+
+	prepend(A, 34);
+	prepend(A, 4);
+	prepend(A, 354);
+	prepend(A, 3674);
+	printf("A: ");
+	printList(stdout, A);
+	printf("\n");
+	moveBack(A);
+	printf("A: ");
+	printList(stdout, A);
+	printf("\n");
+	insertBefore(A, 435);
+	printf("A: ");
+	printList(stdout, A);
+	printf("\n");
+	if (index(A) != 4)
+		printf("wrong1\n");
+	prepend(A, 324);
+	prepend(A, 33464);
+	prepend(A, 3498);
+	moveFront(A);
+	insertBefore(A, 67);
+	if (index(A) != 1)
+		printf("wrong2\n");
+
+	clear(A);
+	
+	prepend(A, 1);
+	prepend(B, 1);
+	prepend(A, 2);
+	prepend(B, 2);
+	moveBack(A);
+	delete (A);
+	if (equals(A, B))
+		printf("wrong1\n");
+	printf("A: ");
+	printList(stdout, A);
+	printf("\n");
+	printf("B: ");
+	printList(stdout, B);
+	printf("\n");
+	moveBack(B);
+	printf("B: ");
+	printList(stdout, B);
+	printf("\n");
+	delete (B);
+	printf("B: ");
+	printList(stdout, B);
+	printf("\n");
+	if (!equals(A, B))
+		printf("wrong2\n");
+	append(A, 3);
+	append(B, 3);
+	moveBack(A);
+	delete (A);
+	moveBack(B);
+	delete (B);
+	if (!equals(A, B))
+		printf("wrong3\n");
+
 	return(0);
 }
