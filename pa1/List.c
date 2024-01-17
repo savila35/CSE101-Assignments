@@ -307,13 +307,14 @@ void insertBefore(List L, int x) {
 		exit(EXIT_FAILURE);
 	}
 	if (L->cursor == L->front) {
+		printf("(2)%d\n", get(L));
 		L->front = N;
 		N->next = L->cursor;
 		L->cursor->previous = N;
 		L->cursorIndex++;
 	} else {
-		N->previous = L->cursor->previous;
 		L->cursor->previous->next = N;
+		N->previous = L->cursor->previous;
 		N->next = L->cursor;
 		L->cursor->previous = N;
 	}
@@ -378,7 +379,6 @@ void deleteBack(List L) {
 		L->cursorIndex = -1;
 	}
 	L->back = L->back->previous;
-	L->back->next = NULL;
 	freeNode(&n);
 	L->length--;
 	return;
@@ -399,13 +399,14 @@ void delete(List L) {
 	if (n == L->front) {
 		L->front = n->next;
 		freeNode(&n);
-
+	} else if (n == L->back) {
+		L->back = n->previous;
+		freeNode(&n);
 	} else {
 		L->cursor->previous->next = L->cursor->next;
 		L->cursor->next->previous = L->cursor->previous;
 		freeNode(&n);
 	}
-	L->cursor = NULL;
 	L->cursorIndex = -1;
 	L->length--;
 	return;
