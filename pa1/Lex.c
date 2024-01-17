@@ -1,3 +1,9 @@
+//-----------------------------------------------------------------------------
+// Sebastian Avila
+// snavila
+// pa1
+//-----------------------------------------------------------------------------
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -6,16 +12,23 @@
 #define BUFFSIZE 500
 
 int main(int argc, char **argv) {
-	if (argc < 2) {
-		fprintf(stderr, "Lex.c: too few arguments\n");
+	if (argc != 3) {
+		fprintf(stderr, "Lex.c: invalid arguments\n");
 		exit(EXIT_FAILURE);
 	}
 	
 	FILE *fin = fopen(argv[1], "r");
 	if (fin == NULL) {
-		fprintf(stderr, "Lex.c: error opening file");
+		fprintf(stderr, "Lex.c: error opening file %s\n", argv[1]);
 		exit(EXIT_FAILURE);
 	}	
+
+	FILE *fout = fopen(argv[2], "w");
+	if (fout == NULL) {
+		fprintf(stderr, "Lex.c: error opening file %s\n", argv[2]);
+		exit(EXIT_FAILURE);
+	}	
+	
 	char c;
 	int numLines = 0;
 	for (c = getc(fin); c != EOF; c = getc(fin)) {
@@ -23,31 +36,26 @@ int main(int argc, char **argv) {
 			numLines++;
 		}
 	}
-	printf("%d\n", numLines);
 	
 	fseek(fin, 0, SEEK_SET);
 	char **lines = malloc(numLines * sizeof(char*));
 	for (int i = 0; i < numLines; i++) {
 		lines[i] = (char*) malloc(500 * sizeof(lines[i]));
 		if (fgets(lines[i], BUFFSIZE, fin) == NULL) {
-			fprintf(stderr, "Lex.c: error reading file");
 		}
 		lines[i][strlen(lines[i]) - 1] = '\0';
 	}
 	List L = newList();
 	int currIndex;
 	for (int j = 0; j < numLines; j++) {
-		printf("what is happening\n");
 		
 		if (length(L) == 0) {
 			append(L, j);
 			continue;
 		}
 		moveFront(L);
-		printf("curr: %s\n", index(L) >=0 ? "good" : "fuck you pussy");
 		while (index(L) >= 0) {
 			currIndex = get(L);
-			printf("%d\n", currIndex);
 			if (strcmp(lines[currIndex], lines[j]) > 0) {
 				insertBefore(L, j);
 				break;
@@ -56,12 +64,25 @@ int main(int argc, char **argv) {
 				append(L, j);
 				break;
 			}
-			printf("str1: %s str2: %s\n",lines[currIndex], lines[j]);
 			moveNext(L);
 		}
 	}
 	
-	printList(stdout, L);
-	printf("\n");
+	
+	moveFront(L);
+	while (index(L) >= 0) {
+		currIndex = get(L);
+		fprintf(fout, "%s\n", lines[currIndex]);
+		moveNext(L);
+	}
+	
+	for (int h = 0; h < numLines; h++) {
+		free(lines[h]);
+	}
+	free(lines);
+	freeList(&L);
+	fclose(fin);
+	fclose(fout);
+
 	return 0;
 }
