@@ -307,7 +307,6 @@ void insertBefore(List L, int x) {
 		exit(EXIT_FAILURE);
 	}
 	if (L->cursor == L->front) {
-		printf("(2)%d\n", get(L));
 		L->front = N;
 		N->next = L->cursor;
 		L->cursor->previous = N;
@@ -317,6 +316,7 @@ void insertBefore(List L, int x) {
 		N->previous = L->cursor->previous;
 		N->next = L->cursor;
 		L->cursor->previous = N;
+		L->cursorIndex++;
 	}
 	L->length++;
 	return;
@@ -356,11 +356,22 @@ void deleteFront(List L) {
 		exit(EXIT_FAILURE);
 	}
 	Node n = L->front;
+	if (L->length == 1) {
+		freeNode(&n);
+		L->back = NULL;
+		L->front = NULL;
+		L->cursor = NULL;
+		L->cursorIndex = -1;
+		return;
+	}
 	L->front = L->front->next;
 	L->front->previous = NULL;
 	freeNode(&n);
 	if (L->cursorIndex >= 0) {
 		L->cursorIndex--;
+		if (L->cursorIndex < 0) {
+			L->cursor = NULL;
+		}
 	}
 	L->length--;
 	return;
@@ -374,12 +385,23 @@ void deleteBack(List L) {
 		exit(EXIT_FAILURE);
 	}
 	Node n = L->back;
-	if (L->cursor == L->back) {
+	if (L->length == 1) {
+		freeNode(&n);
+		L->back = NULL;
+		L->front = NULL;
+		L->cursor = NULL;
+		L->cursorIndex = -1;
+		L->length--;
+		return;
+	}
+	L->back = n->previous;
+	L->back->next = NULL;
+	freeNode(&n);
+	if (L->cursorIndex == L->length - 1) {
 		L->cursor = NULL;
 		L->cursorIndex = -1;
 	}
-	L->back = L->back->previous;
-	freeNode(&n);
+
 	L->length--;
 	return;
 }
@@ -402,6 +424,7 @@ void delete(List L) {
 	} else if (n == L->back) {
 		L->back = n->previous;
 		freeNode(&n);
+		L->back->next = NULL;
 	} else {
 		L->cursor->previous->next = L->cursor->next;
 		L->cursor->next->previous = L->cursor->previous;
