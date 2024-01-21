@@ -2,10 +2,11 @@
 # Makefile for CSE 101 Programming Assignment 1
 #
 # make                   makes Lex
-# make ListTest		 makes ListTest
+# make ListTest		 	 makes ListTest
 # make ListClient        makes ListClient
 # make clean             removes all binaries
 # make checkClient       checks ListClient for memory errors
+# make checkTest       	 checks ListTest for memory errors
 # make checkLex          checks Lex for memory errors
 #------------------------------------------------------------------------------
 
