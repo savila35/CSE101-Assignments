@@ -15,7 +15,7 @@
 
 int main(int argc, char **argv) {
 	if (argc != 3) {
-		fprintf(stderr, "Lex.c: invalid arguments\n");
+		fprintf(stderr, "Lex.c: invalid arguments\nUsage: ./Lex.c <input.txt> <output.txt>\n");
 		exit(EXIT_FAILURE);
 	}
 	
