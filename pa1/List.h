@@ -10,6 +10,8 @@
 #define LIST_H_INCLUDE_
 #include <stdbool.h>
 #include <assert.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 #define FORMAT "%d" // format string for List Element
 

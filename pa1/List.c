@@ -6,11 +6,12 @@
 // Implementation file for List ADT
 //------------------------------------------------------------------------------
 
+#include "List.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <stdbool.h>
-#include "List.h"
+
 
 
 
@@ -108,7 +109,7 @@ int index(List L) {
 // Returns front element of L. Pre: length()>0
 int front(List L) {
 	if (length(L) <=0 ) {
-		printf("List Error: calling front() on empty list\n");
+		fprintf(stderr,"List Error: calling front() on empty list\n");
 		exit(EXIT_FAILURE);
 	}
 	int front = L->front->data;
@@ -119,7 +120,7 @@ int front(List L) {
 // Returns back element of L. Pre: length>0
 int back(List L) {
 	if (length(L) <=0 ) {
-		printf("List Error: calling back() on empty list\n");
+		fprintf(stderr,"List Error: calling back() on empty list\n");
 		exit(EXIT_FAILURE);
 	}
 	int back = L->back->data;
@@ -130,11 +131,11 @@ int back(List L) {
 // Returns cursor element of L. Pre: length()>0, index()>=0.
 int get(List L) {
 	if (length(L) <= 0) {
-		printf("List Error: calling get() on empty list\n");
+		fprintf(stderr,"List Error: calling get() on empty list\n");
 		exit(EXIT_FAILURE);
 	}
 	if (index(L) < 0) {
-		printf("List Error: calling get() on undefined cursor\n");
+		fprintf(stderr,"List Error: calling get() on undefined cursor\n");
 		exit(EXIT_FAILURE);
 	}
 	int cursor = L->cursor->data;
@@ -186,11 +187,11 @@ void clear(List L) {
 // Overwrites the cursor element's data with x. Pre: length()>0, index()>=0
 void set(List L, int x) {
 	if (length(L) <= 0) {
-		printf("List Error: calling set() on empty list\n");
+		fprintf(stderr,"List Error: calling set() on empty list\n");
 		exit(EXIT_FAILURE);
 	}
 	if (index(L) < 0) {
-		printf("List Error: calling set() on undefinded cursor\n");
+		fprintf(stderr,"List Error: calling set() on undefinded cursor\n");
 		exit(EXIT_FAILURE);
 	}	
 	L->cursor->data = x;
@@ -299,11 +300,11 @@ void append(List L, int x) {
 void insertBefore(List L, int x) {
 	Node N = newNode(x);
 	if (length(L) <= 0) {
-		printf("List Error: calling insertBefore() on empty list\n");
+		fprintf(stderr,"List Error: calling insertBefore() on empty list\n");
 		exit(EXIT_FAILURE);
 	}
 	if (index(L) < 0) {
-		printf("List Error: calling insertBefore() on undefined cursor\n");
+		fprintf(stderr,"List Error: calling insertBefore() on undefined cursor\n");
 		exit(EXIT_FAILURE);
 	}
 	if (L->cursor == L->front) {
@@ -327,11 +328,11 @@ void insertBefore(List L, int x) {
 void insertAfter(List L, int x) {
 	Node N = newNode(x);
 	if (length(L) <= 0) {
-		printf("List Error: calling insertAfter() on empty list\n");
+		fprintf(stderr,"List Error: calling insertAfter() on empty list\n");
 		exit(EXIT_FAILURE);
 	}
 	if (index(L) < 0) {
-		printf("List Error: calling insertAfter() on undefined cursor\n");
+		fprintf(stderr,"List Error: calling insertAfter() on undefined cursor\n");
 		exit(EXIT_FAILURE);
 	}
 	if (L->cursor == L->back) {
@@ -352,7 +353,7 @@ void insertAfter(List L, int x) {
 // Delete the front element. Pre: length()>0
 void deleteFront(List L) {
 	if (length(L) <= 0) {
-		printf("List Error: calling deleteFront() on empty list\n");
+		fprintf(stderr,"List Error: calling deleteFront() on empty list\n");
 		exit(EXIT_FAILURE);
 	}
 	Node n = L->front;
@@ -381,7 +382,7 @@ void deleteFront(List L) {
 // Delete the back element. Pre: length()>0
 void deleteBack(List L) {
 	if (length(L) <= 0) {
-		printf("List Error: calling deleteBack() on empty list\n");
+		fprintf(stderr,"List Error: calling deleteBack() on empty list\n");
 		exit(EXIT_FAILURE);
 	}
 	Node n = L->back;
@@ -410,11 +411,11 @@ void deleteBack(List L) {
 // Delete cursor element, making cursor undefinded. Pre: length>0, index()>=0
 void delete(List L) {
 	if (length(L) <= 0) {
-		printf("List Error: calling delete() on empty list\n");
+		fprintf(stderr,"List Error: calling delete() on empty list\n");
 		exit(EXIT_FAILURE);
 	}
 	if (index(L) < 0) {
-		printf("List Error: calling delete() on undefined cursor\n");
+		fprintf(stderr,"List Error: calling delete() on undefined cursor\n");
 		exit(EXIT_FAILURE);
 	}
 	Node n = L->cursor;
