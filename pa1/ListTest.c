@@ -121,10 +121,33 @@ int main(void) {
 	delete(list2);
 	assert(!equals(list1, list2));
 
+	clear(list1);
+	append(list1, 2);
+	prepend(list1,1);
+	assert(front(list1) == 1);
+	assert(back(list1) == 2);
+	moveFront(list1);
+	set(list1, 10);
+	assert(get(list1) == 10);
+
+	clear(list2);
+	//front(list2);
+	//back(list2);
+	List list5 = copyList(list1);
+	for (int i = 1; i <= 10; i++) {
+		append(list2, i);
+		append(list5, i);
+	}
+	List list6 = concatList(list1, list2);
+	assert(equals(list5, list6));
+
+
 	freeList(&list1);
 	freeList(&list2);
 	freeList(&list3);
 	freeList(&list4);
+	freeList(&list5);
+	freeList(&list6);
 
 	return(0);
 }
