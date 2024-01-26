@@ -6,8 +6,8 @@
 #define GRAPH_H_INCLUDE_
 
 #include "List.h"
-#include <stdlib.c>
-#include <stdbool.c>
+#include <stdlib.h>
+#include <stdbool.h>
 
 #define INF -1
 #define NIL 0
@@ -25,8 +25,8 @@ void freeGraph(Graph* pG);
 int getOrder(Graph G);
 int getSize(Graph G);
 int getSource(Graph G);
-int getParent(Graph G);
-int getDist(Graph G);
+int getParent(Graph G, int u);
+int getDist(Graph G, int u);
 void getPath(List L, Graph G, int u);
 
 
@@ -39,3 +39,5 @@ void BFS(Graph G, int s);
 
 // Other operations ------------------------------------------------------------
 void printGraph(FILE* out, Graph G);
+
+#endif

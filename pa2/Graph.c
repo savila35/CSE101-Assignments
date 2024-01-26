@@ -12,7 +12,7 @@ typedef struct GraphObj* Graph;
 
 // private GraphObj type
 typedef struct GraphObj{
-	List* neighbors;
+	List* adjacent;
 	int* color;
 	int* parent;
 	int* distance;
@@ -24,10 +24,10 @@ typedef struct GraphObj{
 // Constructors-Destructors ----------------------------------------------------
 Graph newGraph(int n) {
 	Graph G = malloc(sizeof(GraphObj));
-	G->neighbors = malloc(sizeof(List) * n + 1);
-	G->color = malloc(sizeof(int) * n + 1);
-	G->parent = malloc(sizeof(int) * n + 1);
-	G->distance = malloc(sizeof(int) * n + 1);
+	G->adjacent = calloc(sizeof(List), n + 1);
+	G->color = calloc(sizeof(int), n + 1);
+	G->parent = calloc(sizeof(int), n + 1);
+	G->distance = calloc(sizeof(int), n + 1);
 	for (int i = 1; i <= n; i++) {
 		G->parent[i] = NIL;
 		G->distance[i] = INF;
@@ -40,12 +40,12 @@ Graph newGraph(int n) {
 
 void freeGraph(Graph *pG) {
 	if (pG != NULL && *pG != NULL) {
-		for (int i = 0; i <= n; i++) {
-			freeList(&neighbors[i]);
+		for (int i = 0; i <= (*pG)->order; i++) {
+			freeList(&(*pG)->adjacent[i]);
 		}
-		free(color);
-		free(parent);
-		free(distance);
+		free((*pG)->color);
+		free((*pG)->parent);
+		free((*pG)->distance);
 		free(*pG);
 		*pG = NULL;
 	}
@@ -66,12 +66,88 @@ int getSource(Graph G) {
 }
 
 int getParent(Graph G, int u) {
+	if (1 > u || u > G->order) {
+		fprintf(stderr, "Graph error: calling getParent() with invalid vertex (%d)\n", u);
+		exit(EXIT_FAILURE);
+	}
 	return(G->parent[u]);
 }
 
 int getDist(Graph G, int u) {
-	return(G->distance);
+	if (1 > u || u > G->order) {
+		fprintf(stderr, "Graph error: calling getDist() with invalid vertex (%d)\n", u);
+		exit(EXIT_FAILURE);
+	}
+	return(G->distance[u]);
 }
 
 void getPath(List L, Graph G, int u) {
-	 
+	if (getSource(G) == NIL) {
+		fprintf(stderr, "Graph error: calling getPath() on undefined source\n");
+		exit(EXIT_FAILURE);
+	}
+	if (1 > u || u > G->order) {
+		fprintf(stderr, "Graph error: calling getPath() with invalid vertex (%d)\n", u);
+		exit(EXIT_FAILURE);
+	}
+	if (u == G->source) {
+		append(L, G->source);
+		return;
+	} else if (G->parent[u] == NIL) {
+		append(L, NIL);
+		return;
+	} else {
+		append(L, u);
+		getPath(L, G, G->parent[u]);
+	}
+}
+
+
+// Manipulation procedures -----------------------------------------------------
+void makeNull(Graph G) {
+	for (int i = 1; i <= G->size; i++) {
+		clear(G->adjacent[i]);
+		G->parent[i] = NIL;
+		G->distance[i] = INF;
+	}
+	G->size = 0;
+	G->source = NIL;
+}
+
+void addEdge(Graph G, int u, int v) {
+	if (1 > u || u > G->order || 1 > v || v > G->order) {
+		fprintf(stderr, "Graph error: \
+			calling getPath() with invalid vertex (%d or/and %d)\n", u, v);
+		exit(EXIT_FAILURE);
+	}
+	if (length(G->adjacent[u]) == 0) {
+		append(G->adjacent[u], v);
+	} else {
+		moveFront(G->adjacent[u]);
+		while (index(G->adjacent[u]) >= 0) {
+			if (v < get(G->adjacent[u])) {
+				insertBefore(G->adjacent[u], v);
+				break;
+			}
+			if (index(G->adjacent[u]) == length(G->adjacent[u]) - 1) {
+				append(G->adjacent[u], v);
+			}
+			moveNext(G->adjacent[u]);
+		}	
+	}
+	if (length(G->adjacent[v]) == 0) {
+		append(G->adjacent[v], u);
+	} else {
+		moveFront(G->adjacent[v]);
+		while (index(G->adjacent[v]) >= 0) {
+			if (u < get(G->adjacent[v])) {
+				insertBefore(G->adjacent[v], u);
+				break;
+			}
+			if (index(G->adjacent[v]) == length(G->adjacent[v]) - 1) {
+				append(G->adjacent[v], u);
+			}
+			moveNext(G->adjacent[v]);
+		}	
+	}
+}
