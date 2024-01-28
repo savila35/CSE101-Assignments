@@ -115,7 +115,7 @@ void getPath(List L, Graph G, int u) {
 
 // Manipulation procedures -----------------------------------------------------
 void makeNull(Graph G) {
-	for (int i = 1; i <= G->size; i++) {
+	for (int i = 1; i <= G->order; i++) {
 		clear(G->adjacent[i]);
 		G->parent[i] = NIL;
 		G->distance[i] = INF;
