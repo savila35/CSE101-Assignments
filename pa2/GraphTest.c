@@ -15,41 +15,57 @@ int main(void) {
 	addEdge(G, 1, 2);
 	addEdge(G, 1, 3);
 	addEdge(G, 2, 4);
-	addEdge(G, 2, 5);
+	addEdge(G, 5, 2);
 	addEdge(G, 2, 6);
 	addEdge(G, 3, 4);
 	addEdge(G, 4, 5);
 	addEdge(G, 5, 6);
 	printGraph(stdout, G);
+	assert(getOrder(G) == 6);
+	assert(getSize(G) == 8);
 	
 	BFS(G, 1);
-	printf("Distance: %d\n", getDist(G, 5));
+	assert(getDist(G, 5) == 2);
+	assert(getParent(G, 5) == 2);
 
-	Graph A = newGraph(64);
+	makeNull(G);
+	assert(getOrder(G) == 6);
+	assert(getSize(G) == 0);
+
 	List L = newList();
-	List C = newList();
-	addEdge(A, 64, 4);
-	addEdge(A, 64, 3);
-	addEdge(A, 42, 2);
-	addEdge(A, 2, 64);
-	addEdge(A, 4, 2);
-	addEdge(A, 3, 42);
-	BFS(A, 3);
-	getPath(L, A, 64);
-	append(C, 3);
-	append(C, 64);
-	if (!equals(L, C))
-		printf("1\n");
-	moveFront(L);
-	BFS(A, 2);
-	getPath(L, A, 2);
-	append(C, 2);
+	List L2 = newList();
+	addEdge(G, 1, 4);
+	addEdge(G, 1, 3);
+	addEdge(G, 6, 2);
+	addEdge(G, 2, 1);
+	addEdge(G, 4, 2);
+	addEdge(G, 3, 6);
+	BFS(G, 3);
+	getPath(L, G, 1);
+	append(L2, 3);
+	append(L2, 1);
+	assert(equals(L, L2));
+	BFS(G, 2);
+	getPath(L, G, 2);
+	append(L2, 2);
 	printList(stdout, L);
 	printf("\n");
-	printList(stdout, C);
+	printList(stdout, L2);
 	printf("\n");
-	if (!equals(L, C))
-		printf("2\n");
+	assert(equals(L, L2));
 
+	makeNull(G);
+	addArc(G, 1, 2);
+	addArc(G, 2, 3);
+	BFS(G,1);
+	clear(L);
+	assert(getDist(G,3) == 2);
+	BFS(G,3);
+	assert(getDist(G,1) == INF);
+	printGraph(stdout,G);
+	
+	freeGraph(&G);
+	freeList(&L);
+	freeList(&L2);
 	return(0);
 }
