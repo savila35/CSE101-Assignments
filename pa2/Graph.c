@@ -1,7 +1,11 @@
 //------------------------------------------------------------------------------
+// Sebastian Avila
+// snavila
+// 2024 Winter CSE101 pa2
 // Graph.c
 // Implementation file for Graph ADT
 //------------------------------------------------------------------------------
+
 #include "Graph.h"
 #include <stdio.h>
 

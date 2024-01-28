@@ -1,7 +1,11 @@
 //------------------------------------------------------------------------------
+// Sebastian Avila
+// snavila
+// 2024 Winter CSE101 pa2
 // Graph.h
 // Header file for Graph ADT
 //------------------------------------------------------------------------------
+
 #ifndef GRAPH_H_INCLUDE_
 #define GRAPH_H_INCLUDE_
 

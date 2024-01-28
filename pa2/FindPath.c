@@ -1,3 +1,10 @@
+//------------------------------------------------------------------------------
+// Sebastian Avila
+// snavila
+// 2024 Winter CSE101 pa2
+// Finds the shortest path from a source to destination in a given graph
+//------------------------------------------------------------------------------
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "Graph.h"
