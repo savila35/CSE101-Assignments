@@ -5,6 +5,10 @@
 #include "Graph.h"
 #include <stdio.h>
 
+#define WHITE 0
+#define GRAY 1
+#define BLACK 2
+
 // structs ---------------------------------------------------------------------
 
 // private Graph type
@@ -29,6 +33,7 @@ Graph newGraph(int n) {
 	G->parent = calloc(sizeof(int), n + 1);
 	G->distance = calloc(sizeof(int), n + 1);
 	for (int i = 1; i <= n; i++) {
+		G->adjacent[i] = newList();
 		G->parent[i] = NIL;
 		G->distance[i] = INF;
 	}
@@ -43,6 +48,7 @@ void freeGraph(Graph *pG) {
 		for (int i = 0; i <= (*pG)->order; i++) {
 			freeList(&(*pG)->adjacent[i]);
 		}
+		free((*pG)->adjacent);
 		free((*pG)->color);
 		free((*pG)->parent);
 		free((*pG)->distance);
@@ -117,7 +123,7 @@ void makeNull(Graph G) {
 void addEdge(Graph G, int u, int v) {
 	if (1 > u || u > G->order || 1 > v || v > G->order) {
 		fprintf(stderr, "Graph error: \
-			calling getPath() with invalid vertex (%d or/and %d)\n", u, v);
+			calling addEdge() with invalid vertex (%d or/and %d)\n", u, v);
 		exit(EXIT_FAILURE);
 	}
 	if (length(G->adjacent[u]) == 0) {
@@ -131,6 +137,7 @@ void addEdge(Graph G, int u, int v) {
 			}
 			if (index(G->adjacent[u]) == length(G->adjacent[u]) - 1) {
 				append(G->adjacent[u], v);
+				break;
 			}
 			moveNext(G->adjacent[u]);
 		}	
@@ -146,8 +153,73 @@ void addEdge(Graph G, int u, int v) {
 			}
 			if (index(G->adjacent[v]) == length(G->adjacent[v]) - 1) {
 				append(G->adjacent[v], u);
+				break;
 			}
 			moveNext(G->adjacent[v]);
 		}	
+	}
+}
+
+void addArc(Graph G, int u, int v) {
+	if (1 > u || u > G->order || 1 > v || v > G->order) {
+                fprintf(stderr, "Graph error: \
+                        calling addArc() with invalid vertex (%d or/and %d)\n", u, v);
+                exit(EXIT_FAILURE);
+        }
+        if (length(G->adjacent[u]) == 0) {
+                append(G->adjacent[u], v);
+        } else {
+                moveFront(G->adjacent[u]);
+                while (index(G->adjacent[u]) >= 0) {
+                        if (v < get(G->adjacent[u])) {
+                                insertBefore(G->adjacent[u], v);
+                                break;
+                        }
+                        if (index(G->adjacent[u]) == length(G->adjacent[u]) - 1) {
+                                append(G->adjacent[u], v);
+				break;
+                        }
+                        moveNext(G->adjacent[u]);
+                }
+	}
+}
+void BFS(Graph G, int s) {
+	G->source = s;
+	for (int i = 1; i <= G->order; i++) {
+		G->color[i] = WHITE;
+		G->distance[i] = INF;
+		G->parent[i] = NIL;
+	}
+	G->color[s] = GRAY;
+	G->distance[s] = 0;
+	G->parent[s] = NIL;
+	List L = newList();
+	append(L, s);
+	while (length(L) > 0) {
+		int x = front(L);
+		deleteFront(L);
+		moveFront(G->adjacent[x]);
+		while (index(G->adjacent[x]) >= 0) {
+			int j = get(G->adjacent[x]);
+			if (G->color[j] == WHITE) {
+				G->color[j] = GRAY;
+				G->distance[j] = G->distance[x] + 1;
+				G->parent[j] = x;
+				append(L,j);
+			}
+			G->color[j] = BLACK;
+			moveNext(G->adjacent[x]);
+		}
+	}
+	freeList(&L);
+}
+
+
+// Other operations ------------------------------------------------------------
+void printGraph(FILE* out, Graph G) {
+	for (int i = 1; i <= G->order; i++) {
+		fprintf(out, "%d: ", i);
+		printList(out, G->adjacent[i]);
+		fprintf(out,"\n");
 	}
 }
