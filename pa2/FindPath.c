@@ -52,10 +52,10 @@ int main(int argc, char** argv) {
 			break;
 		}
 		BFS(G, s);
-		if (getDist(G, s) == INF) {
+		if (getDist(G, d) == INF) {
 			fprintf(out, "\nThe distance from %d to %d is infinity\n", s, d);
 		} else {
-			fprintf(out, "\nThe distance from %d to %d is %d\n", s, d, getDist(G, s));
+			fprintf(out, "\nThe distance from %d to %d is %d\n", s, d, getDist(G, d));
 		}
 		getPath(path, G, d);
 		if (front(path) == NIL) {

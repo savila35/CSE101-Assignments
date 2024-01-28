@@ -103,8 +103,8 @@ void getPath(List L, Graph G, int u) {
 		append(L, NIL);
 		return;
 	} else {
-		append(L, u);
 		getPath(L, G, G->parent[u]);
+		append(L, u);
 	}
 }
 
@@ -158,6 +158,7 @@ void addEdge(Graph G, int u, int v) {
 			moveNext(G->adjacent[v]);
 		}	
 	}
+	G->size++;
 }
 
 void addArc(Graph G, int u, int v) {
@@ -182,7 +183,9 @@ void addArc(Graph G, int u, int v) {
                         moveNext(G->adjacent[u]);
                 }
 	}
+	G->size++;
 }
+
 void BFS(Graph G, int s) {
 	G->source = s;
 	for (int i = 1; i <= G->order; i++) {
