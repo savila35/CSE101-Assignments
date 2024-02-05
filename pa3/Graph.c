@@ -65,7 +65,7 @@ Graph copyGraph(Graph G) {
 	Graph C = newGraph(G->order);
 	for (int i = 1; i <= G->order; i++) {
 		for (moveFront(G->adjacent[i]); index(G->adjacent[i]) >= 0; moveNext(G->adjacent[i])) {
-			addEdge(C, i, get(G->adjacent[i]));
+			addArc(C, i, get(G->adjacent[i]));
 		}
 	}
 	return(C);
@@ -267,7 +267,7 @@ void visit(Graph G, List S, int x, int* time) {
 	G->discover[x] = ++(*time);
 	G->color[x] = GRAY;
 	for (moveFront(G->adjacent[x]); index(G->adjacent[x]) >= 0; moveNext(G->adjacent[x])) {
-		if (G->color[front(G->adjacent[x])] == WHITE) {
+		if (G->color[get(G->adjacent[x])] == WHITE) {
 			G->parent[get(G->adjacent[x])] = x;
 			visit(G, S, get(G->adjacent[x]), time);
 		}
