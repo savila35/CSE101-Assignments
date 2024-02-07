@@ -26,3 +26,6 @@
 - **FindComponents.c**
 
 	- Finds the strongly connected components of a given graph.
+
+- **Makefile**
+	- This file contains rules to compile executables from the program and header files.
