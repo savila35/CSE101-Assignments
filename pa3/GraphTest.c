@@ -83,6 +83,7 @@ int main(void) {
 	freeGraph(&A);
 	freeGraph(&B);
 	freeGraph(&C);
+	freeGraph(&D);
 	freeList(&S);
 	
 	return(0);
