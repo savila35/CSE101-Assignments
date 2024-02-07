@@ -1,3 +1,11 @@
+//------------------------------------------------------------------------------
+// Sebastian Avila
+// snavila
+// 2024 Winter CSE101 pa3
+// GraphTest.c
+// Tests to ensure proper functionality of Graph ADT
+//------------------------------------------------------------------------------
+
 #include "Graph.h"
 #include <stdio.h>
 
@@ -23,6 +31,7 @@ int main(void) {
 	addArc(A, 8, 8);
 	assert(getSize(A) == 14);
 	
+	printGraph(stdout, A);
 	List S = newList();
 	for (int i=1;i<=8;i++){append(S, i);}
 	DFS(A, S);
@@ -41,11 +50,15 @@ int main(void) {
 	Graph B = copyGraph(A);
 	assert(getOrder(B) == 8);
 	assert(getSize(B) == 14);
+	printf("\n");
+	printGraph(stdout, B);
 
 	Graph C = transpose(A);
 	assert(getOrder(C) == 8);
 	assert(getSize(C) == 14);
 	
+	printf("\n");
+	printGraph(stdout, C);
 	DFS(C, S);
 	int stack2[8] = {8,7,6,3,4,1,5,2};
 	c = 0;
@@ -57,6 +70,15 @@ int main(void) {
 	assert(getParent(C, 7) == NIL);
 	assert(getParent(C, 3) == NIL);
 	assert(getParent(C, 1) == NIL);
+
+	Graph D = newGraph(4);
+	addEdge(D,1,2);
+	addEdge(D,2,3);
+	addEdge(D,3,4);
+	addEdge(D,4,1);
+	assert(getSize(D) == 4);
+	printf("\n");
+	printGraph(stdout, D);
 
 	freeGraph(&A);
 	freeGraph(&B);

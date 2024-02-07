@@ -1,3 +1,11 @@
+//------------------------------------------------------------------------------
+// Sebastian Avila
+// snavila
+// 2024 Winter CSE101 pa3
+// FindComponents.c
+// Finds the strongly connected components of a given graph
+//------------------------------------------------------------------------------
+
 #include "Graph.h"
 #include <stdio.h>
 

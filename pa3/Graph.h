@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 // Sebastian Avila
 // snavila
-// 2024 Winter CSE101 pa2
+// 2024 Winter CSE101 pa3
 // Graph.h
 // Header file for Graph ADT
 //------------------------------------------------------------------------------
@@ -15,6 +15,7 @@
 
 #define INF -1
 #define NIL 0
+#define UNDEF -2
 
 // Exported Types --------------------------------------------------------------
 typedef struct GraphObj* Graph;

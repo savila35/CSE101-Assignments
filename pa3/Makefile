@@ -3,16 +3,18 @@
 #
 #  make                     makes FindComponents
 #  make GraphClient         makes GraphClient
+#  make GraphTest           makes GraphTest
 #  make clean               removes binaries
 #  make checkFind           tests FindComponents for memory leaks on in3
 #  make checkClient         tests GraphClient for memory leaks
+#  make checkTest           tests GraphTest for memory leaks
 #------------------------------------------------------------------------------
 
 BASE_SOURCES   = Graph.c List.c
 BASE_OBJECTS   = Graph.o List.o
 HEADERS        = Graph.h List.h
-COMPILE        = gcc -g -std=c17 -Wall -c
-LINK           = gcc -g -std=c17 -Wall -o
+COMPILE        = gcc -std=c17 -Wall -c
+LINK           = gcc -std=c17 -Wall -o
 REMOVE         = rm -f
 MEMCHECK       = valgrind --leak-check=full
 
@@ -45,3 +47,6 @@ checkFind : FindComponents
 
 checkClient : GraphClient
 	$(MEMCHECK) GraphClient
+
+checkTest : GraphTest
+	$(MEMCHECK) GraphTest
