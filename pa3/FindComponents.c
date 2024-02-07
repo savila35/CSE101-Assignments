@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
 	}
 	
 	int numVert;
-	if (fscanf(in, "%d", &numVert) != 1) {
+	if (fscanf(infile, "%d", &numVert) != 1) {
 		fprintf(stderr, "FindComponent.c: error reading num vertices\n");
 		exit(EXIT_FAILURE);
 	}
@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
 
 	int v1, v2;
 	while (true) {
-		if (fscanf(in, "%d %d", &v1, &v2) != 2) {
+		if (fscanf(infile, "%d %d", &v1, &v2) != 2) {
 			fprintf(stderr, "FindComponent.c: error reading edge\n");
 			exit(EXIT_FAILURE);
 		}
@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
 	}
 	fprintf(outfile,"Adjacency list representation of G:\n");
 	printGraph(outfile,G);
-	fprintf(outfile, "\n\n");
+	fprintf(outfile, "\n");
 
 	Graph T = transpose(G);
 	List S = newList();
@@ -49,6 +49,41 @@ int main(int argc, char** argv) {
 
 	DFS(G, S);
 	DFS(T, S);
+
+	int num_scc = 0;
+	for (moveFront(S); index(S) >= 0; moveNext(S)) {
+		if (getParent(T, get(S)) == NIL) {
+			num_scc++;
+		}
+	}
+	
+	fprintf(outfile, "G contains %d strongly connected components:\n", num_scc);
+	
+
+	List* components = malloc((num_scc + 1) * sizeof(List));
+	for (int j = 1; j <= num_scc; j++) {
+		components[j] = newList();
+	}
+
+	int curr = 1;
+	for (moveBack(S); index(S) >= 0; movePrev(S)) {
+		prepend(components[curr], get(S));
+		if (getParent(T, get(S)) == NIL) {
+			fprintf(outfile, "Component %d: ", curr);
+			printList(outfile, components[curr]);
+			fprintf(outfile, "\n");
+			freeList(&components[curr]);
+			curr++;
+		}
+	}
+	
+	free(components);
+	freeList(&S);
+	freeGraph(&G);
+	freeGraph(&T);
+
+	fclose(infile);
+	fclose(outfile);
 
 	return(0);
 }
