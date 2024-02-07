@@ -44,6 +44,8 @@ Graph newGraph(int n) {
 		G->adjacent[i] = newList();
 		G->parent[i] = NIL;
 		G->distance[i] = INF;
+		G->discover[i] = UNDEF;
+		G->finish[i] = UNDEF;
 	}
 	G->order = n;
 	G->size = 0;
@@ -64,6 +66,10 @@ Graph transpose(Graph G) {
 Graph copyGraph(Graph G) {
 	Graph C = newGraph(G->order);
 	for (int i = 1; i <= G->order; i++) {
+		C->parent[i] = G->parent[i];
+		C->distance[i] = G->distance[i];
+		C->discover[i] = G->discover[i];
+		C->finish[i] = G->finish[i];
 		for (moveFront(G->adjacent[i]); index(G->adjacent[i]) >= 0; moveNext(G->adjacent[i])) {
 			addArc(C, i, get(G->adjacent[i]));
 		}
@@ -222,6 +228,9 @@ void addArc(Graph G, int u, int v) {
                                 insertBefore(G->adjacent[u], v);
                                 break;
                         }
+			if (v == get(G->adjacent[u])) {
+				return;
+			}
                         if (index(G->adjacent[u]) == length(G->adjacent[u]) - 1) {
                                 append(G->adjacent[u], v);
 				break;
