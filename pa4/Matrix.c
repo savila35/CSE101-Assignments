@@ -3,50 +3,34 @@
 // structs ---------------------------------------------------------------------
 
 // private Matrix type
-typedef MatrixObj* Matrix;
+typedef struct MatrixObj* Matrix;
 
 // private MatrixObj type
 typedef struct MatrixObj {
 	List* row;
 	int size;
 	int NNZ;
-};
+} MatrixObj;
 
 // private Entry type
-typedef EntryObj* Entry;
+typedef struct EntryObj* Entry;
 
 // private EntryObj type
 typedef struct EntryObj {
 	int col;
 	double val;
-}
+} EntryObj;
 
 // Constructor-Deconstructor ---------------------------------------------------
 Matrix newMatrix(int n) {
 	Matrix M = malloc(sizeof(MatrixObj));
-	M->row = calloc(sizeof(List), n+1)
+	M->row = calloc(sizeof(List), n+1);
 	M->size = n;
 	M->NNZ = 0;
 	for (int i = 1; i <= n; i++) {
-		row[i] = NULL;
+		M->row[i] = NULL;
 	}
-}
-
-void freeMatrix(Matrix *pM) {
-	if (pM != NULL && *pM != NULL) {
-		for (int i = 1; i <= (*pM)->size; i++) {
-			for (moveFront((*pM)->row[i]); index((*pM)->row[i]) >= 0; moveNext((*pM)->row[i])) {
-				freeEntry(&(get((*pM)->row[i])));
-			}
-			freeList(&(*pM)->row);
-		}
-	}
-}
-
-Entry makeEntry(int c, double v) {
-	Entry E = malloc(sizeof(EntryObj));
-	E->col = c;
-	E->val = v;
+	return(M);
 }
 
 void freeEntry(Entry *pE) {
@@ -56,6 +40,26 @@ void freeEntry(Entry *pE) {
 	}
 }
 
+void freeMatrix(Matrix *pM) {
+	if (pM != NULL && *pM != NULL) {
+		for (int i = 1; i <= (*pM)->size; i++) {
+			for (moveFront((*pM)->row[i]); index((*pM)->row[i]) >= 0; moveNext((*pM)->row[i])) {
+				Entry E = get((*pM)->row[i]);
+				freeEntry(&E);
+			}
+			freeList(&(*pM)->row[i]);
+		}
+	}
+}
+
+Entry makeEntry(int c, double v) {
+	Entry E = malloc(sizeof(EntryObj));
+	E->col = c;
+	E->val = v;
+	return(E);
+}
+
+
 // Access functions
 
 
@@ -64,9 +68,10 @@ void makeZero(Matrix M) {
 	for (int i = 1; i <= M->size; i++) {
 		if (M->row[i] != NULL) {
 			for (moveFront(M->row[i]); index(M->row[i]) >= 0; moveNext(M->row[i])) {
-				freeEntry(&(get(M->row[i])));
+				Entry E = get(M->row[i]);
+				freeEntry(&E);
 			}
-			freeList(M->row[i]);
+			freeList(&(M->row[i]));
 		}
 	}
 	M->NNZ = 0;
@@ -79,21 +84,22 @@ void changeEntry(Matrix M, int i, int j, double x) {
 		exit(EXIT_FAILURE);
 	}
 	for (moveFront(M->row[i]); index(M->row[i]); moveNext(M->row[i])) {
-		if (get(M->row[i])->col == j) {
+		Entry E = get(M->row[i]);
+		if (E->col == j) {
 			if (x == 0) {
 				freeEntry(get(M->row[i]));
-				delete(M-row[i]);
+				delete(M->row[i]);
 				return;
 			}
-			get(M->row[i])->val = x;
+			E->val = x;
 			return;
 		}
-		if (get(M->row[i])->col > j) {
+		if (E->col > j) {
 			if (x == 0) {
 				return;
 			}
-			Entry E = makeEntry(j, x);
-			insertBefore(M->row[i], E);
+			Entry N = makeEntry(j, x);
+			insertBefore(M->row[i], N);
 			return;
 		}
 	}
@@ -101,7 +107,22 @@ void changeEntry(Matrix M, int i, int j, double x) {
 
 
 // Matrix Arithmetic operations ------------------------------------------------
+Matrix copy(Matrix A) {
+	Matrix C = newMatrix(A->size);
+	for (int i = 1; i <= A->size; i++) {
+		if (A->row[i] != NULL) {
+			for (moveFront(A->row[i]); index(A->row[i]); moveNext(A->row[i])) {
+				append(C->row[i], get(A->row[i]));
+			}
+		}
+	}
+	return(C);
+}
 
+Matrix transpose(Matrix A) {
+	Matrix T = newMatrix(A->size);
+	return(T);
+}
 
 
 // Other operations ------------------------------------------------------------
@@ -110,8 +131,10 @@ void printMatrix(FILE* out, Matrix M) {
 		if (M->row[i] != NULL) {
 			fprintf(out, "%d:", i);
 			for (moveFront(M->row[i]); index(M->row[i]) >= 0; moveNext(M->row[i])) {
-				fprintf(out, "(%d, %.1f) ", M->row[i]->col,  M->row[i]->val);
+				Entry E = get(M->row[i]);
+				fprintf(out, "(%d, %.1f) ", E->col,  E->val);
 			}
 			fprintf(out, "/n");
 		}
+	}
 }

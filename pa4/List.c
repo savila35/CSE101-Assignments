@@ -107,29 +107,29 @@ int index(List L) {
 
 // front()
 // Returns front element of L. Pre: length()>0
-int front(List L) {
+ListElement front(List L) {
 	if (length(L) <=0 ) {
 		fprintf(stderr,"List Error: calling front() on empty list\n");
 		exit(EXIT_FAILURE);
 	}
-	int front = L->front->data;
+	ListElement front = L->front->data;
 	return(front);
 }
 
 // back()
 // Returns back element of L. Pre: length>0
-int back(List L) {
+ListElement back(List L) {
 	if (length(L) <=0 ) {
 		fprintf(stderr,"List Error: calling back() on empty list\n");
 		exit(EXIT_FAILURE);
 	}
-	int back = L->back->data;
+	ListElement back = L->back->data;
 	return(back);
 }
 
 // get()
 // Returns cursor element of L. Pre: length()>0, index()>=0.
-int get(List L) {
+ListElement get(List L) {
 	if (length(L) <= 0) {
 		fprintf(stderr,"List Error: calling get() on empty list\n");
 		exit(EXIT_FAILURE);
@@ -138,7 +138,7 @@ int get(List L) {
 		fprintf(stderr,"List Error: calling get() on undefined cursor\n");
 		exit(EXIT_FAILURE);
 	}
-	int cursor = L->cursor->data;
+	ListElement cursor = L->cursor->data;
 	return(cursor);
 }
 
