@@ -23,8 +23,8 @@ ADT2_TEST      = $(ADT2)Test
 ADT2_SOURCE    = $(ADT2).c
 ADT2_OBJECT    = $(ADT2).o
 ADT2_HEADER    = $(ADT2).h
-COMPILE        = gcc -std=c17 -Wall -c
-LINK           = gcc -std=c17 -Wall -o
+COMPILE        = gcc -g -std=c17 -Wall -c
+LINK           = gcc -g -std=c17 -Wall -o
 REMOVE         = rm -f
 MEMCHECK       = valgrind --leak-check=full
 
@@ -46,6 +46,18 @@ $(ADT1_TEST).o: $(ADT1_TEST).c $(ADT1_HEADER) $(ADT2_HEADER)
 $(ADT2_TEST).o: $(ADT2_TEST).c $(ADT2_HEADER)
 	$(COMPILE) $(ADT2_TEST).c
 
+MatrixClient.o: Matrix.c Matrix.h List.c List.h
+	$(COMPILE) MatrixClient.c
+
+MatrixClient: MatrixClient.o List.o Matrix.o
+	$(LINK) MatrixClient MatrixClient.o Matrix.o List.o
+
+ListClient.o: List.c List.h List.c List.h
+	$(COMPILE) ListClient.c
+
+ListClient: ListClient.o List.o List.o
+	$(LINK) ListClient ListClient.o List.o
+
 $(ADT1_OBJECT): $(ADT1_SOURCE) $(ADT1_HEADER)
 	$(COMPILE) $(ADT1_SOURCE)
 
@@ -54,7 +66,7 @@ $(ADT2_OBJECT): $(ADT2_SOURCE) $(ADT2_HEADER)
 
 clean:
 	$(REMOVE) $(MAIN) $(ADT1_TEST) $(ADT2_TEST)  
-	$(REMOVE) $(OBJECT) $(ADT1_TEST).o $(ADT2_TEST).o $(ADT1_OBJECT) $(ADT2_OBJECT)
+	$(REMOVE) $(OBJECT) $(ADT1_TEST).o $(ADT2_TEST).o $(ADT1_OBJECT) $(ADT2_OBJECT) MatricClient.o MatrixClient
 
 $(MAIN)Check: $(MAIN)
 	$(MEMCHECK) $(MAIN) in5 junk5

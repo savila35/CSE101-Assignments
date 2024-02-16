@@ -43,12 +43,18 @@ void freeEntry(Entry *pE) {
 void freeMatrix(Matrix *pM) {
 	if (pM != NULL && *pM != NULL) {
 		for (int i = 1; i <= (*pM)->size; i++) {
+			if ((*pM)->row[i] == NULL) {
+				continue;
+			}
 			for (moveFront((*pM)->row[i]); index((*pM)->row[i]) >= 0; moveNext((*pM)->row[i])) {
-				Entry E = get((*pM)->row[i]);
+				Entry E = (Entry) get((*pM)->row[i]);
 				freeEntry(&E);
 			}
 			freeList(&(*pM)->row[i]);
 		}
+		free((*pM)->row);
+		free(*pM);
+		*pM = NULL;
 	}
 }
 
@@ -70,7 +76,35 @@ int NNZ(Matrix M) {
 }
 
 int equals(Matrix A, Matrix B) {
-	return(0);
+	if (A->size != B->size || A->NNZ != B->NNZ) {
+		return(0);
+	}
+	for (int i = 1; i <= A->size; i++) {
+		if (A->row[i] == NULL && B->row[i] == NULL) {
+			continue;
+		}
+		if (A->row[i] == NULL || B->row[i] == NULL) {
+			return(0);
+		}
+		moveFront(A->row[i]);
+		moveFront(B->row[i]);
+		while (1) {
+			if (index(A->row[i]) < 0 && index(B->row[i]) < 0) {
+				break;
+			}
+			if (index(A->row[i]) < 0 || index(B->row[i]) < 0) {			
+				return(0);
+			}
+			Entry aE = get(A->row[i]);
+			Entry bE = get(B->row[i]);
+			if (aE->val != bE->val) {
+				return(0);
+			}
+			moveNext(A->row[i]);
+			moveNext(B->row[i]);
+		}
+	}
+	return(1);
 }
 
 
@@ -85,6 +119,7 @@ void makeZero(Matrix M) {
 			freeEntry(&E);
 		}
 		freeList(&(M->row[i]));
+		M->row[i] = NULL;
 	}
 	M->NNZ = 0;
 }
@@ -143,13 +178,13 @@ void changeEntry(Matrix M, int i, int j, double x) {
 // Matrix Arithmetic operations ------------------------------------------------
 Matrix copy(Matrix A) {
 	Matrix C = newMatrix(A->size);
-	C->NNZ = A->NNZ;
 	for (int i = 1; i <= A->size; i++) {
 		if (A->row[i] == NULL) {
 			continue;
 		}
-		for (moveFront(A->row[i]); index(A->row[i]); moveNext(A->row[i])) {
-			append(C->row[i], get(A->row[i]));
+		for (moveFront(A->row[i]); index(A->row[i]) >= 0; moveNext(A->row[i])) {
+			Entry E = get(A->row[i]);
+			changeEntry(C, i, E->col, E->val);
 		}
 	}
 	return(C);
@@ -191,22 +226,8 @@ double vectorDot(List P, List C) {
 	int sum = 0;
 	Entry pE;
 	Entry cE;
-	if (P == NULL && C == NULL) {	
+	if (P == NULL || C == NULL) {	
 		return(0);
-	}
-	if (P == NULL) {
-		for (moveFront(C); index(C) >= 0; moveNext(C)) {
-			cE = get(C);
-			sum += cE->val;
-		}
-		return(sum);
-	}
-	if (C == NULL) {
-		for (moveFront(P); index(P) >= 0; moveNext(P)) {
-			pE = get(P);
-			sum += pE->val;
-		}
-		return(sum);
 	}
 	moveFront(P);
 	moveFront(C);
@@ -227,7 +248,6 @@ double vectorDot(List P, List C) {
 }
 
 List vectorSum(List P, List C) {
-	List sum = newList();
 	Entry pE;
 	Entry cE;
 	if (P == NULL && C == NULL) {	
@@ -239,16 +259,19 @@ List vectorSum(List P, List C) {
 	if (C == NULL) {
 		return(P);
 	}
+	List sum = newList();
 	moveFront(P);
 	moveFront(C);
 	while (index(P) >= 0 && index(C) >= 0) {
 		pE = get(P);
 		cE = get(C);
 		if (pE->col < cE->col) {
-			append(sum, pE);
+			Entry E = newEntry(pE->col, pE->val);
+			append(sum, E);
 			moveNext(P);
 		} else if (pE->col > cE->col) {
-			append(sum, cE);
+			Entry E = newEntry(cE->col, cE->val);
+			append(sum, E);
 			moveNext(C);
 		} else {
 			Entry sE = newEntry(pE->col, pE->val + cE->val);
@@ -257,25 +280,28 @@ List vectorSum(List P, List C) {
 			moveNext(C);
 		}
 	}
-	while (index(P) >= 0) {
-		pE = get(P);
-		append(sum, pE);
-		moveNext(P);
-	}
-	while (index(C) >= 0) {
-		cE = get(C);
-		append(sum, cE);
-		moveNext(C);
-	}
+	 while (index(P) >= 0) {
+		Entry E = newEntry(pE->col, pE->val);
+		append(sum, E);
+                moveNext(P);
+        }
+        while (index(C) >= 0) {
+		Entry E = newEntry(cE->col, cE->val);
+		append(sum, E);
+                moveNext(C);
+        }
 	return(sum);
 }
 
 List vectorDiff(List P, List C) {
-	List diff = newList();
 	Entry cE;
 	if (P == NULL && C == NULL) {	
 		return(NULL);
 	}
+	if (C == NULL) {
+		return(P);
+	}
+	List diff = newList();
 	if (P == NULL) {
 		for (moveFront(C); index(C) >= 0; moveNext(C)) {
 			cE = get(C);
@@ -284,16 +310,14 @@ List vectorDiff(List P, List C) {
 		}
 		return(diff);
 	}
-	if (C == NULL) {
-		return(P);
-	}
 	moveFront(P);
 	moveFront(C);
 	while (index(P) >= 0 && index(C) >= 0) {
 		Entry pE = get(P);
 		Entry cE = get(C);
 		if (pE->col < cE->col) {
-			append(diff, pE);
+			Entry E = newEntry(pE->col, pE->val);
+			append(diff, E);
 			moveNext(P);
 		} else if (pE->col > cE->col) {
 			Entry E = newEntry(cE->col, 0 - cE->val);
@@ -311,7 +335,8 @@ List vectorDiff(List P, List C) {
 	}
 	while (index(P) >= 0) {
 		Entry pE = get(P);
-		append(diff, pE);
+		Entry E = newEntry(pE->col, pE->val);
+		append(diff, E);
 		moveNext(P);
 	}
 	while (index(C) >= 0) {
@@ -321,6 +346,7 @@ List vectorDiff(List P, List C) {
 		moveNext(C);
 	}
 	if (length(diff) == 0) {
+		freeList(&diff);
 		return(NULL);
 	}
 	return(diff);
@@ -359,20 +385,25 @@ Matrix product(Matrix A, Matrix B) {
 	Matrix P = newMatrix(A->size);
 	Matrix Bt = transpose(B);
 	for (int i = 1; i <= P->size; i++) {
+		if (A->row[i] == NULL) {
+			continue;
+		}
 		P->row[i] = newList();
 		for (int j = 1; j <= P->size; j++) {
+			if (Bt->row[i] == NULL) {
+				continue;
+			}
 			int val = vectorDot(A->row[i], Bt->row[j]);
 			if (val == 0) {
 				continue;
 			}
-			Entry E = newEntry(j, val);
-			append(P->row[i], E);
-			P->NNZ++;
+			changeEntry(P,i, j, val);
 		}
 		if (length(P->row[i]) == 0) {
 			freeList(&P->row[i]);
 		}
 	}
+	freeMatrix(&Bt);
 	return(P);
 }
 
