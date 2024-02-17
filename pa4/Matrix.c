@@ -1,3 +1,11 @@
+//------------------------------------------------------------------------------
+// Sebastian Avila
+// snavila
+// 2024 Winter CSE101 pa4
+// Matrix.c
+// Implementation of an n x n sparse Matrix and matrix arithmetic
+//------------------------------------------------------------------------------
+
 #include "Matrix.h"
 
 // structs ---------------------------------------------------------------------
@@ -312,9 +320,6 @@ Matrix diff(Matrix A, Matrix B) {
 		D->row[i] = row;
 		D->NNZ += length(row);
 	}
-	//Matrix nB = scalarMult(-1,B);
-	//Matrix D = sum(A, nB);
-	//freeMatrix(&nB);
 	return(D);
 }
 

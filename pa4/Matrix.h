@@ -1,3 +1,11 @@
+//------------------------------------------------------------------------------
+// Sebastian Avila
+// snavila
+// 2024 Winter CSE101 pa4
+// Matrix.h
+// Header file for matrix ADT implementation
+//------------------------------------------------------------------------------
+
 #ifndef MATRIX_H_INCLUDE_
 #define MATRIX_H_INCLUDE_
 
