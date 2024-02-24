@@ -1,3 +1,11 @@
+//------------------------------------------------------------------------------
+// Sebastian Avila
+// snavila
+// 2024 Winter CSE101 pa5
+// Shuffle.cpp
+// Determines the amount of perfect shuffles required to return to original state of deck with size 1 - n
+//------------------------------------------------------------------------------
+
 #include "List.h"
 #include <iostream>
 

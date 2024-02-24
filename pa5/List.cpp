@@ -1,3 +1,11 @@
+//------------------------------------------------------------------------------
+// Sebastian Avila
+// snavila
+// 2024 Winter CSE101 pa5
+// List.cpp
+// Implementation of a List ADT
+//------------------------------------------------------------------------------
+
 #include "List.h"
 
 // Private Constructor ---------------------------------------------------------
@@ -260,6 +268,9 @@ List List::concat(const List &L) const{
 }
 
 std::string List::to_string() const{
+	if (num_elements == 0) {
+		return("()");
+	}
     Node* N = frontDummy->next;
     std::string s = "(";
     while(1) {
