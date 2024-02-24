@@ -18,3 +18,6 @@
 
 	- Performs shuffling operations and determines how many shuffles are necessary to bring a List back into its original order
 
+- **Makefile**
+
+	- Contains rules for compilation and linking of source files
