@@ -19,7 +19,7 @@ List::List() {
     beforeCursor = frontDummy;
     afterCursor = backDummy;
     pos_cursor = 0;
-    num_elements = -1;
+    num_elements = 0;
 }
 
 List::List(const List& L) {
@@ -31,8 +31,12 @@ List::List(const List& L) {
     afterCursor = backDummy;
     pos_cursor = 0;
     num_elements = 0;
-
-    // NOT DONE 
+    Node* N = L.frontDummy->next;
+	while (N != L.backDummy) {
+		this->insertBefore(N->data);
+		N = N->next;
+	}
+	moveFront();
 }
 
 List::~List() {
@@ -68,22 +72,23 @@ int List::position() const{
 
 ListElement List::peekNext() const{
     if (num_elements < pos_cursor) {
-        throw std::out_of_range("List: peekNext(): cursor at back");
+        throw std::range_error("List: peekNext(): cursor at back");
     }
-    return(afterCursor->prev->data);
+    return(afterCursor->data);
 }
 
 ListElement List::peekPrev() const{
     if (pos_cursor == 0) {
-        throw std::out_of_range("List: peekPrev(): cursor at front");
+        throw std::range_error("List: peekPrev(): cursor at front");
     } 
-    return(beforeCursor->next->data);
+    return(beforeCursor->data);
 }
 
 
 // Manipulation procedures -----------------------------------------------------
 
 void List::clear() {
+	moveFront();
     while (num_elements > 0) {
         eraseAfter();
     }
@@ -103,19 +108,21 @@ void List::moveBack() {
 
 ListElement List::moveNext() {
     if (pos_cursor >= num_elements) {
-        throw std::out_of_range("List: moveNext(): cursor at back");
+        throw std::range_error("List: moveNext(): cursor at back");
     }
     beforeCursor = afterCursor;
     afterCursor = afterCursor->next;
+    pos_cursor++;
     return(beforeCursor->data);
 }
 
 ListElement List::movePrev() {
     if (pos_cursor <= 0) {
-        throw std::out_of_range("List: movePrev(): cursor at front");
+        throw std::range_error("List: movePrev(): cursor at front");
     } 
     afterCursor = beforeCursor;
     beforeCursor = beforeCursor->prev;
+    pos_cursor--;
     return(afterCursor->data);
 }
 
@@ -142,36 +149,39 @@ void List::insertBefore(ListElement x) {
 
 void List::setAfter(ListElement x) {
     if (pos_cursor >= num_elements) {
-        throw std::out_of_range("List: setAfter(): cursor at back");
+        throw std::range_error("List: setAfter(): cursor at back");
     }
     afterCursor->data = x;
 }
 
 void List::setBefore(ListElement x) {
     if (pos_cursor <= 0) {
-        throw std::out_of_range("List: setBefore(): cursor at front");
+        throw std::range_error("List: setBefore(): cursor at front");
     }
     beforeCursor->data = x;
 }
 
 void List::eraseAfter() {
     if (pos_cursor >= num_elements) {
-        throw std::out_of_range("List: eraseAfter(): cursor at back");
+        throw std::range_error("List: eraseAfter(): cursor at back");
     }
     beforeCursor->next = afterCursor->next;
     afterCursor->next->prev = beforeCursor;
     delete afterCursor;
     afterCursor = beforeCursor->next;
+	num_elements--;
 }
 
 void List::eraseBefore() {
     if (pos_cursor <= 0) {
-        throw std::out_of_range("List: eraseBefore(): cursor at front");
+        throw std::range_error("List: eraseBefore(): cursor at front");
     }
     afterCursor->prev = beforeCursor->prev;
-    beforeCursor->prev = afterCursor;
+    beforeCursor->prev->next = afterCursor;
     delete beforeCursor;
     beforeCursor = afterCursor->prev;
+    pos_cursor--;
+	num_elements--;
 }
 
 
@@ -203,9 +213,9 @@ void List::cleanup() {
     while (N != backDummy)
     {
         Node* inner = N->next;
+		int inIndex = outIndex + 1;
         while (inner != backDummy)
         {
-            int inIndex = outIndex + 1;
             if (N->data == inner->data) {
                 Node* D = inner;
                 if (inner == beforeCursor) {
@@ -223,10 +233,11 @@ void List::cleanup() {
                 }
             } else {
                 inner = inner->next;
+				inIndex++;
             }
-            N = N->next;
-            outIndex++;
         }
+		N = N->next;
+		outIndex++;
     }
 }
 
@@ -237,12 +248,15 @@ List List::concat(const List &L) const{
         N.insertBefore(node->data);
         node = node->next;
     }
-    node = L.frontDummy->next;
-    while (node != backDummy) {
-        N.insertBefore(node->data);
-        node = node->next;
+    Node* M = L.frontDummy->next;
+    while (M != L.backDummy) {
+        N.insertBefore(M->data);
+        M = M->next;
     }
-    return(L);
+	N.pos_cursor = 0;
+	N.beforeCursor = N.frontDummy->next;
+	N.afterCursor = N.beforeCursor->next;
+    return(N);
 }
 
 std::string List::to_string() const{
