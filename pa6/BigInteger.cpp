@@ -108,6 +108,26 @@ void sumList(List& S, List A, List B, int signA, int signB) {
     }
 }
 
+void subList(List& S, List A, List B, int signA, int signB) {
+    A.moveBack();
+    B.moveBack();
+    long x, a, b;
+    while (A.position() > 0 && B.position() > 0) {
+        a = A.movePrev() * signA;
+        b = B.movePrev() * signB;
+        x = a - b;
+        S.insertAfter(x);
+    }
+    while (A.position() > 0) {
+        a = A.movePrev() * signA; 
+        S.insertAfter(a);
+    }
+    while (B.position() > 0) {
+       b = B.movePrev() * signB * -1; 
+        S.insertAfter(b);
+    }
+}
+
 int normalizeList(List& L) {
     if (L.length() == 0) {
         return(0);
@@ -155,6 +175,13 @@ BigInteger BigInteger::add(const BigInteger& N) const{
 
 BigInteger BigInteger::sub(const BigInteger& N) const {
     BigInteger D;
+    List vectorSub;
+    List tD = digits;
+    List nD = N.digits;
+    subList(vectorSub, digits, N.digits, signum, N.signum);
+    int sign = normalizeList(vectorSub);
+    D.digits = vectorSub;
+    D.signum = sign;
     return(D);
 }
 
