@@ -88,24 +88,54 @@ void BigInteger::negate() {
 
 //------ Helper functions ------------------------------------------------------
 
-void sumList(List& S, List A, List B, int sign) {
+void sumList(List& S, List A, List B, int signA, int signB) {
     A.moveBack();
     B.moveBack();
     long x, a, b;
     while (A.position() > 0 && B.position() > 0) {
-        a = A.movePrev();
-        b = B.movePrev() * sign;
+        a = A.movePrev() * signA;
+        b = B.movePrev() * signB;
         x = a + b;
         S.insertAfter(x);
     }
     while (A.position() > 0) {
-        a = A.movePrev(); 
+        a = A.movePrev() * signA; 
         S.insertAfter(a);
     }
     while (B.position() > 0) {
-		b = B.movePrev(); 
-        S.insertAfter(b) * sign;
+       b = B.movePrev() * signB; 
+        S.insertAfter(b);
     }
+}
+
+int normalizeList(List& L) {
+    if (L.length() == 0) {
+        return(0);
+    }
+    int carry = 0;
+    L.moveBack(); // Start from the least significant digit
+    while (L.position() > 0) {
+        int value = L.peekPrev() + carry; // Add carry from the previous digit
+		int x = (L.position() == 1) ? value % base : std::abs(value % base);
+        L.setBefore(x); // Set current digit to the remainder of division by base
+        carry = value / base; // Calculate new carry
+        L.movePrev(); // Move to the next most significant digit
+    }
+    if (carry > 0) { // If there's a carry left after the most significant digit
+        L.moveFront();
+        L.insertAfter(carry); // Insert new most significant digit
+    }
+
+    // Optional: Remove leading zeros, if any, after normalization
+    while (L.length() > 1 && L.front() == 0) {
+        L.moveFront();
+        L.eraseAfter(); // Remove leading zero
+    }
+	int sign = (L.front() > 0) ? 1 : -1;
+	int x  = std::abs(L.front());
+	L.moveFront();
+	L.setAfter(x);
+    return(sign);
 }
 
 
@@ -114,44 +144,12 @@ void sumList(List& S, List A, List B, int sign) {
 BigInteger BigInteger::add(const BigInteger& N) const{
     BigInteger S;
     List vectorSum;
-	List A = digits;
-	List B = N.digits;
-	if (signum == 0) {
-		S = N;
-		return(S);
-	} else if (N.signum == 0) {
-		S = this;
-		return(S);
-	}
-	if (signnum == N.signum) {
-		sumList(vectorSum, A, B, 1);
-		if (signum < 0) {
-			S.signum = -1;
-		} else {
-			S.signum = 1;
-		}
-	} else if (signum < 0) {
-		S = N.sub(this);
-		return(S);
-	} else {
-		S = this.sub(N);
-		return(S);
-	}
-    int carry = 0;
-    vectorSum.moveBack();
-    while (vectorSum.position() > 0) {
-        long x = vectorSum.movePrev();
-        carry = x / base;
-        x = x % base;
-        S.digits.insertAfter(x + carry);
-    }
-	if (S.digits.front() > 0) {
-		S.signum = 1;
-	} else if (S.digits.front() < 0) {
-		S.signum = -1;
-	} else {
-		S.signum = 0;
-	}
+    List tD = digits;
+    List nD = N.digits;
+    sumList(vectorSum, digits, N.digits, signum, N.signum);
+    int sign = normalizeList(vectorSum);
+    S.digits = vectorSum;
+    S.signum = sign;
     return(S);
 }
 
