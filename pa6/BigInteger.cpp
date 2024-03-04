@@ -1,8 +1,8 @@
 #include "BigInteger.h"
 
 // Global Constants ------------------------------------------------------------
-const int power = 1;
-const long base = 10;
+const int power = 9;
+const long base = 1000000000;
 
 // Private Constructor ---------------------------------------------------------
 
@@ -41,9 +41,20 @@ BigInteger::BigInteger(std::string s) {
             s.erase(0,1);
         }
     }
+ 	while (s.front() == '0') {
+		s.erase(0,1);
+	}
     while (s.length() % power != 0) {
         s = "0" + s;
     }
+	for (char ch : s) {
+        if (!(ch >= 48 && ch <= 57)) {
+			throw std::invalid_argument("BigInteger: Constructor: non-numeric string\n");
+        }
+	}
+	if (s.empty()) {
+		throw std::invalid_argument("BigInteger: Constructor: empty string\n");
+	}
     int front = 0;
     std::string sub;
     digits.moveFront();
@@ -83,8 +94,8 @@ int BigInteger::compare(const BigInteger& N) const{
     tL.moveFront();
     nL.moveFront();
     while (tL.position() < tL.length()) {
-        int t = tL.moveNext();
-        int n = nL.moveNext();
+        long t = tL.moveNext();
+        long n = nL.moveNext();
         if (t == n) {
             continue;
         }
@@ -157,6 +168,15 @@ void subList(List& S, List A, List B, int signA, int signB) {
        b = B.movePrev() * signB * -1; 
         S.insertAfter(b);
     }
+	while (A.position() > 0) {
+        a = A.movePrev() * signA;
+        S.insertAfter(a);
+    }
+    while (B.position() > 0) {
+       b = B.movePrev() * signB * -1;
+        S.insertAfter(b);
+    }
+
 }
 
 int normalizeList(List& L) {
@@ -166,8 +186,8 @@ int normalizeList(List& L) {
     int carry = 0;
     L.moveBack(); // Start from the least significant digit
     while (L.position() > 0) {
-        int value = L.peekPrev() + carry; // Add carry from the previous digit
-		int x = (L.position() == 1) ? value % base : std::abs(value % base);
+        long value = L.peekPrev() + carry; // Add carry from the previous digit
+		long x = (L.position() == 1) ? value % base : std::abs(value % base);
         L.setBefore(x); // Set current digit to the remainder of division by base
         carry = value / base; // Calculate new carry
         L.movePrev(); // Move to the next most significant digit
@@ -183,7 +203,10 @@ int normalizeList(List& L) {
         L.eraseAfter(); // Remove leading zero
     }
 	int sign = (L.front() > 0) ? 1 : -1;
-	int x  = std::abs(L.front());
+	if (L.front() == 0) {
+		return(0);
+	}
+	long x  = std::abs(L.front());
 	L.moveFront();
 	L.setAfter(x);
     return(sign);
@@ -199,8 +222,8 @@ void shiftList(List& L, int p) {
 void scalarMultList(List& L, ListElement m) {
     L.moveBack();
     while (L.position() > 0) {
-        int value = L.peekPrev();
-        int x = value * m;
+        long value = L.peekPrev();
+        long x = value * m;
         L.setBefore(x);
         L.movePrev();
     }
