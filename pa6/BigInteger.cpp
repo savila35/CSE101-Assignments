@@ -67,6 +67,29 @@ int BigInteger::sign() const{
 }
 
 int BigInteger::compare(const BigInteger& N) const{
+    if (signum == 1 && N.signum == -1) {
+        return(1);
+    } else if (signum == -1 && N.signum == 1) {
+        return(-1);
+    }
+    int resultMult = (signum == 1) ? 1 : -1;
+    if (digits.length() > N.digits.length()) {
+        return(1 * resultMult);
+    } else if (digits.length() < N.digits.length()) {
+        return(-1 * resultMult);
+    }
+    List tL = digits;
+    List nL = N.digits;
+    tL.moveFront();
+    nL.moveFront();
+    while (tL.position() < tL.length()) {
+        int t = tL.moveNext();
+        int n = nL.moveNext();
+        if (t == n) {
+            continue;
+        }
+        return((t > n ? 1 * resultMult : -1 * resultMult));;
+    }
     return(0);
 }
 
@@ -277,23 +300,23 @@ std::ostream& operator<<( std::ostream& stream, BigInteger N) {
 }
 
 bool operator==( const BigInteger& A, const BigInteger& B) {
-    return(true);
+    return((A.compare(B) == 0) ? true : false);
 }
 
 bool operator<( const BigInteger& A, const BigInteger& B) {
-    return(true);
+    return((A.compare(B) < 0) ? true : false);
 }
 
 bool operator<=( const BigInteger& A, const BigInteger& B) {
-    return(true);
+    return((A.compare(B) <= 0) ? true : false);
 }
 
 bool operator>( const BigInteger& A, const BigInteger& B) {
-    return(true);
+    return((A.compare(B) > 0) ? true : false);
 }
 
 bool operator>=( const BigInteger& A, const BigInteger& B) {
-    return(true);
+    return((A.compare(B) >= 0) ? true : false);
 }
 
 BigInteger operator+( const BigInteger& A, const BigInteger& B ) {
@@ -302,5 +325,23 @@ BigInteger operator+( const BigInteger& A, const BigInteger& B ) {
 
 BigInteger operator+=( BigInteger& A, const BigInteger& B ) {
     A = A.add(B);
+    return(A);
+}
+
+BigInteger operator-( const BigInteger& A, const BigInteger& B ) {
+    return(A.sub(B));
+}
+
+BigInteger operator-=( BigInteger& A, const BigInteger& B ) {
+    A = A.sub(B);
+    return(A);
+}
+
+BigInteger operator*( const BigInteger& A, const BigInteger& B) {
+    return(A.mult(B));
+}
+
+BigInteger operator*=( BigInteger& A, const BigInteger& B) {
+    A = A.mult(B);
     return(A);
 }
