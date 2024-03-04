@@ -1,8 +1,8 @@
 #include "BigInteger.h"
 
 // Global Constants ------------------------------------------------------------
-const int power = 2;
-const long base = 100;
+const int power = 1;
+const long base = 10;
 
 // Private Constructor ---------------------------------------------------------
 
@@ -89,6 +89,14 @@ void BigInteger::negate() {
 //------ Helper functions ------------------------------------------------------
 
 void sumList(List& S, List A, List B, int signA, int signB) {
+    if (A.length() == 0) {
+        S = B;
+		return;
+    }
+    if (B.length() == 0) {
+        S = A;
+		return;
+    }
     A.moveBack();
     B.moveBack();
     long x, a, b;
@@ -158,6 +166,22 @@ int normalizeList(List& L) {
     return(sign);
 }
 
+void shiftList(List& L, int p) {
+    L.moveBack();
+    for (int i = 0; i < p; i++) {
+        L.insertBefore(0);
+    }
+}
+
+void scalarMultList(List& L, ListElement m) {
+    L.moveBack();
+    while (L.position() > 0) {
+        int value = L.peekPrev();
+        int x = value * m;
+        L.setBefore(x);
+        L.movePrev();
+    }
+}
 
 // BigInteger Arithmetic operations --------------------------------------------
 
@@ -187,6 +211,36 @@ BigInteger BigInteger::sub(const BigInteger& N) const {
 
 BigInteger BigInteger::mult(const BigInteger& N) const{
     BigInteger P;
+    if (signum == 0 || N.signum == 0) {
+        return(P);
+    }
+    if ((signum == 1 && N.signum == 1) || (signum == -1 && N.signum == -1)) {
+        P.signum = 1;
+    } else {
+        P.signum = -1;
+    }
+    
+    List longer, shorter, total;
+    if (digits.length() >= N.digits.length()) {
+        longer = digits;
+        shorter = N.digits;
+    } else {
+        longer = N.digits;
+        shorter = digits; 
+    }
+    shorter.moveBack();
+    int shift = 0;
+    while (shorter.position() > 0) {
+        List l = longer;
+		List t;
+        scalarMultList(l, shorter.movePrev());
+        shiftList(l, shift);
+        sumList(t, l, total, 1, 1);
+        normalizeList(t);
+        total = t;
+        shift++;
+    }
+	P.digits = total;
     return(P);
 }
 
