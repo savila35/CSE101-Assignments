@@ -13,7 +13,7 @@
 int main() {
 	List A;
 	List B;
-	for (int i = 0; i < 10; i++) {
+	for (long i = 0; i < 10; i++) {
 		A.insertBefore(i);
 		B.insertAfter(i);
 	}
@@ -26,7 +26,7 @@ int main() {
 	assert(A.back() == 9);
 	assert(B.front() == 9);
 	assert(B.back() == 0);
-	for (int j = 0; j < 10; j++) {
+	for (long j = 0; j < 10; j++) {
 		A.insertBefore(j);
 	}
 	A.moveFront();

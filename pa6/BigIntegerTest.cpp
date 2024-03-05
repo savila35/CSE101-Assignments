@@ -67,7 +67,18 @@ int main() {
     B = BigInteger("-112122223333");
     D = BigInteger("1000000000");
 	std::cout << A - B << std::endl;
+	
+	A = BigInteger(750);
+	A *= 3005;
+	assert(A == 750 *3005);
 
+	B = BigInteger(2999);
+	B -= 2999; 
+	assert(B == 0);
+
+	C = BigInteger(30001231232);
+	C += 5123231313;
+	assert(C == 30001231232 + 5123231313);
 
 	return(EXIT_SUCCESS);
 }
