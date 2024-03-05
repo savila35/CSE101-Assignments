@@ -125,7 +125,7 @@ void BigInteger::negate() {
 void negateList(List& L) {
     L.moveBack();
     while (L.position() > 0) {
-        int x = L.movePrev() * -1;
+        long x = L.movePrev() * -1;
         L.setAfter(x);
     }
 }
@@ -149,21 +149,21 @@ void sumList(List& S, List A, List B, int sign) {
         S.insertAfter(x);
     }
     while (A.position() > 0) {
-        int a = A.movePrev();
+        long a = A.movePrev();
         S.insertAfter(a);
     }
     while (B.position() > 0) {
-        int b = B.movePrev();
+        long b = B.movePrev();
         S.insertAfter(b * sign);
     }
 }
 
 int normalizeList(List& L) {
     long carry = 0;
-    int x = 0;
+    long x = 0;
     L.moveBack();
     while (L.position() > 0) {
-        int value = L.movePrev() + carry;
+        long value = L.movePrev() + carry;
         if (value >= base) {
             if (value % base != 0) {
                 x = value - (value % base);
@@ -207,7 +207,7 @@ int normalizeList(List& L) {
     } else {
         L.moveBack();
         while (L.position() > 0) {
-            int x = L.movePrev() * -1;
+            long x = L.movePrev() * -1;
             x += carry;
             if (x < 0) {
                 L.setAfter(x + base);
@@ -249,7 +249,7 @@ BigInteger BigInteger::add(const BigInteger& N) const{
     } else if (signum == 1 && N.signum == -1) {
         sumList(S.digits, digits, N.digits, -1);
     } else if (signum == -1 && N.signum == -1) {
-        List tD;
+        List tD = digits;;
         negateList(tD);
         sumList(S.digits, tD, N.digits, -1);
     } else {
@@ -295,25 +295,24 @@ BigInteger BigInteger::mult(const BigInteger& N) const{
         P.signum = -1;
     }
     
-    List longer, shorter, total;
-    if (digits.length() >= N.digits.length()) {
-        longer = digits;
-        shorter = N.digits;
-    } else {
-        longer = N.digits;
-        shorter = digits; 
-    }
-    shorter.moveBack();
     int shift = 0;
-    while (shorter.position() > 0) {
-        List l = longer;
-		List t;
-        scalarMultList(l, shorter.movePrev());
-        shiftList(l, shift);
-        sumList(t, l, total, 1);
-        normalizeList(t);
-        total = t;
+    List total;
+    List temp;
+    List tD = digits;
+    List D = digits;
+    List nD = N.digits;
+	D.moveBack();
+    while (D.position() > 0) {
+        long x = D.movePrev();
+		scalarMultList(nD, x);
+        sumList(temp, temp, nD, 1);
+        normalizeList(temp);
+        shiftList(temp, shift);
+        sumList(total, total, temp, 1);
+        normalizeList(total);
         shift++;
+        temp.clear();
+        nD = N.digits;
     }
 	P.digits = total;
     return(P);
