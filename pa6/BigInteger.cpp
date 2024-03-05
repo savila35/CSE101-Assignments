@@ -122,94 +122,103 @@ void BigInteger::negate() {
 
 //------ Helper functions ------------------------------------------------------
 
-void sumList(List& S, List A, List B, int signA, int signB) {
+void negateList(List& L) {
+    L.moveBack();
+    while (L.position() > 0) {
+        int x = L.movePrev() * -1;
+        L.setAfter(x);
+    }
+}
+
+void sumList(List& S, List A, List B, int sign) {
+    S.clear();
     if (A.length() == 0) {
         S = B;
-		return;
+        return;
     }
     if (B.length() == 0) {
         S = A;
-		return;
+        return;
     }
     A.moveBack();
     B.moveBack();
-    long x, a, b;
     while (A.position() > 0 && B.position() > 0) {
-        a = A.movePrev() * signA;
-        b = B.movePrev() * signB;
-        x = a + b;
+        long a = A.movePrev();
+        long b = B.movePrev();
+        long x = a + (b * sign);
         S.insertAfter(x);
     }
     while (A.position() > 0) {
-        a = A.movePrev() * signA; 
+        int a = A.movePrev();
         S.insertAfter(a);
     }
     while (B.position() > 0) {
-       b = B.movePrev() * signB; 
-        S.insertAfter(b);
+        int b = B.movePrev();
+        S.insertAfter(b * sign);
     }
-}
-
-void subList(List& S, List A, List B, int signA, int signB) {
-    A.moveBack();
-    B.moveBack();
-    long x, a, b;
-    while (A.position() > 0 && B.position() > 0) {
-        a = A.movePrev() * signA;
-        b = B.movePrev() * signB;
-        x = a - b;
-        S.insertAfter(x);
-    }
-    while (A.position() > 0) {
-        a = A.movePrev() * signA; 
-        S.insertAfter(a);
-    }
-    while (B.position() > 0) {
-       b = B.movePrev() * signB * -1; 
-        S.insertAfter(b);
-    }
-	while (A.position() > 0) {
-        a = A.movePrev() * signA;
-        S.insertAfter(a);
-    }
-    while (B.position() > 0) {
-       b = B.movePrev() * signB * -1;
-        S.insertAfter(b);
-    }
-
 }
 
 int normalizeList(List& L) {
+    long carry = 0;
+    int x = 0;
+    L.moveBack();
+    while (L.position() > 0) {
+        int value = L.movePrev() + carry;
+        if (value >= base) {
+            if (value % base != 0) {
+                x = value - (value % base);
+                L.setAfter(value - x);
+                carry = x / base;
+				continue;
+            } else {
+                carry = value / base;
+                L.setAfter(0);
+				continue;
+            }
+        } else if (value < 0 && L.position() > 0) {
+            if (value % base != 0) {
+                x = value - (base + (value % base));
+                L.setAfter(value - x);
+                carry = x / base;
+				continue;
+            } else {
+                carry = value / base;
+                L.setAfter(0);
+				continue;
+            }
+        } else {
+            carry = 0;
+			L.setAfter(value);	
+        }
+    }
+    if (carry != 0) {
+        L.insertAfter(carry);
+        carry = 0;
+    }
+    while (L.length() > 0 && L.front() == 0) {
+        L.moveFront();
+        L.eraseAfter(); 
+    }
     if (L.length() == 0) {
         return(0);
     }
-    int carry = 0;
-    L.moveBack(); // Start from the least significant digit
-    while (L.position() > 0) {
-        long value = L.peekPrev() + carry; // Add carry from the previous digit
-		long x = (L.position() == 1) ? value % base : std::abs(value % base);
-        L.setBefore(x); // Set current digit to the remainder of division by base
-        carry = value / base; // Calculate new carry
-        L.movePrev(); // Move to the next most significant digit
+    if (L.front() > 0) {
+        return 1;
+    } else {
+        L.moveBack();
+        while (L.position() > 0) {
+            int x = L.movePrev() * -1;
+            x += carry;
+            if (x < 0) {
+                L.setAfter(x + base);
+                carry = -1;
+            } else {
+				L.setAfter(x);
+                carry = 0;
+            }
+        }
     }
-    if (carry > 0) { // If there's a carry left after the most significant digit
-        L.moveFront();
-        L.insertAfter(carry); // Insert new most significant digit
-    }
-
-    // Optional: Remove leading zeros, if any, after normalization
-    while (L.length() > 1 && L.front() == 0) {
-        L.moveFront();
-        L.eraseAfter(); // Remove leading zero
-    }
-	int sign = (L.front() > 0) ? 1 : -1;
-	if (L.front() == 0) {
-		return(0);
-	}
-	long x  = std::abs(L.front());
-	L.moveFront();
-	L.setAfter(x);
-    return(sign);
+    return(-1);
 }
 
 void shiftList(List& L, int p) {
@@ -222,35 +231,55 @@ void shiftList(List& L, int p) {
 void scalarMultList(List& L, ListElement m) {
     L.moveBack();
     while (L.position() > 0) {
-        long value = L.peekPrev();
+        long value = L.movePrev();
         long x = value * m;
-        L.setBefore(x);
-        L.movePrev();
+        L.setAfter(x);
     }
 }
+
 
 // BigInteger Arithmetic operations --------------------------------------------
 
 BigInteger BigInteger::add(const BigInteger& N) const{
     BigInteger S;
-    List vectorSum;
-    List tD = digits;
-    List nD = N.digits;
-    sumList(vectorSum, digits, N.digits, signum, N.signum);
-    int sign = normalizeList(vectorSum);
-    S.digits = vectorSum;
+    if (signum == 1 && N.signum == 1) {
+        sumList(S.digits, digits, N.digits, 1);
+    } else if (signum == -1 && N.signum == 1) {
+        sumList(S.digits, N.digits, digits, -1);
+    } else if (signum == 1 && N.signum == -1) {
+        sumList(S.digits, digits, N.digits, -1);
+    } else if (signum == -1 && N.signum == -1) {
+        List tD;
+        negateList(tD);
+        sumList(S.digits, tD, N.digits, -1);
+    } else {
+        sumList(S.digits, digits, N.digits, 1);
+        S.signum = (signum == 0) ? N.signum : signum;
+        return(S);
+    }
+
+    int sign = normalizeList(S.digits);
     S.signum = sign;
     return(S);
 }
 
-BigInteger BigInteger::sub(const BigInteger& N) const {
+BigInteger BigInteger::sub(const BigInteger& N) const{
     BigInteger D;
-    List vectorSub;
-    List tD = digits;
-    List nD = N.digits;
-    subList(vectorSub, digits, N.digits, signum, N.signum);
-    int sign = normalizeList(vectorSub);
-    D.digits = vectorSub;
+    if (signum == 1 && N.signum == 1) {
+        sumList(D.digits, digits, N.digits, -1);
+    } else if (signum == -1 && N.signum == 1) {
+        List tD = digits;
+        negateList(tD);
+        sumList(D.digits, tD, N.digits, -1);
+    } else if (signum == 1 && N.signum == -1) {
+        sumList(D.digits, digits, N.digits, 1);
+    } else if (signum == -1 && N.signum == -1) {
+        List tD = digits;
+        negateList(tD);
+        sumList(D.digits, tD, N.digits, 1);
+    }
+
+    int sign = normalizeList(D.digits);
     D.signum = sign;
     return(D);
 }
@@ -281,7 +310,7 @@ BigInteger BigInteger::mult(const BigInteger& N) const{
 		List t;
         scalarMultList(l, shorter.movePrev());
         shiftList(l, shift);
-        sumList(t, l, total, 1, 1);
+        sumList(t, l, total, 1);
         normalizeList(t);
         total = t;
         shift++;
