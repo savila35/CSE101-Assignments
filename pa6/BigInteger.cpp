@@ -178,26 +178,24 @@ int normalizeList(List& L) {
                 L.setAfter(value - x);
                 carry = x / base;
 				continue;
-            } else {
-                carry = value / base;
-                L.setAfter(0);
-				continue;
-            }
-        } else if (value < 0 && L.position() > 0) {
+            } 
+			carry = value / base;
+			L.setAfter(0);
+			continue;
+        }  
+		if (value < 0 && L.position() > 0) {
             if (value % base != 0) {
                 x = value - (base + (value % base));
                 L.setAfter(value - x);
                 carry = x / base;
 				continue;
-            } else {
-                carry = value / base;
-                L.setAfter(0);
-				continue;
-            }
-        } else {
-            carry = 0;
-			L.setAfter(value);	
-        }
+            } 
+			carry = value / base;
+			L.setAfter(0);
+			continue;
+        } 
+		carry = 0;
+		L.setAfter(value);	
     }
     if (carry != 0) {
         L.insertAfter(carry);
@@ -212,19 +210,18 @@ int normalizeList(List& L) {
     }
     if (L.front() > 0) {
         return 1;
-    } else {
-        L.moveBack();
-        while (L.position() > 0) {
-            long x = L.movePrev() * -1;
-            x += carry;
-            if (x < 0) {
-                L.setAfter(x + base);
-                carry = -1;
-            } else {
-				L.setAfter(x);
-                carry = 0;
-            }
-        }
+    } 
+	L.moveBack();
+	while (L.position() > 0) {
+		long x = L.movePrev() * -1;
+		x += carry;
+		if (x < 0) {
+			L.setAfter(x + base);
+			carry = -1;
+			continue;
+		} 
+		L.setAfter(x);
+		carry = 0;
     }
     return(-1);
 }
