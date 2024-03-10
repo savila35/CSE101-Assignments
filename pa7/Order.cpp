@@ -1,3 +1,11 @@
+//------------------------------------------------------------------------------
+// Sebastian Avila
+// snavila
+// 2024 Winter CSE101 pa7
+// Order.cpp
+// Reads strings from file and adds to dictionary with value of line number in source file
+//------------------------------------------------------------------------------
+
 #include "Dictionary.h"
 #include <iostream>
 #include <fstream>

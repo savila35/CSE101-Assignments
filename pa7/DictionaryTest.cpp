@@ -1,3 +1,11 @@
+//------------------------------------------------------------------------------
+// Sebastian Avila
+// snavila
+// 2024 Winter CSE101 pa7
+// DictionaryTest.cpp
+// Test cases for Dictionary ADT implentation
+//------------------------------------------------------------------------------
+
 #include "Dictionary.h"
 #include <iostream>
 #include <assert.h>
