@@ -38,6 +38,9 @@ void Dictionary::preOrderString(std::string& s, Node* R) const{
 }
 
 void Dictionary::BST_insert(Node* M) {
+	if (M == nil) {
+		return;
+	}
 	Node* N = new Node(M->key,M->val);
 	N->color = M->color;
 	N->left = nil;
@@ -310,9 +313,13 @@ void Dictionary::RB_Delete(Node* N) {
         Y->left->parent = Y;
         Y->color = N->color;
     }
+	if (current == N) {
+		current = nil;
+	}
     if (Y_og_color == BLACK) {
         RB_DeleteFixUp(X);
     }
+	delete N;
 }
 
 
@@ -424,18 +431,13 @@ void Dictionary::setValue(keyType k, valType v) {
     Z->parent = Y;
     if (Y == nil) {
         root = Z;
-        num_pairs++;
     } else if (k < Y->key) {
         Y->left = Z;
-        num_pairs++;
-    } else if (k > Y->key) {
-        Y->right = Z;
-        num_pairs++;
     } else {
-        Y->val = v;
-        delete Z;
-    }
+        Y->right = Z;
+    } 
     RB_InsertFixUp(Z);
+	num_pairs++;
 }
 
 void Dictionary::remove(keyType k) {
