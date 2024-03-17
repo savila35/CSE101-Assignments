@@ -2,17 +2,17 @@
 #  Makefile for CSE 101 Programming Assignment 8
 #
 #  make                     makes WordFrequency
-#  make DictionaryClient    makes DictionaryClient
+#  make DictionaryTest    makes DictionaryTest
 #  make clean               removes all binaries
 #  make WordFrequencyCheck  runs WordFrequency under valgrind on Gutenberg
-#  make DictionaryCheck     runs DictionaryClient under valgrind
+#  make DictionaryCheck     runs DictionaryTest under valgrind
 #------------------------------------------------------------------------------
 
 MAIN           = WordFrequency
 ADT            = Dictionary
 SOURCE         = $(MAIN).cpp
 OBJECT         = $(MAIN).o
-ADT_TEST       = $(ADT)Client
+ADT_TEST       = $(ADT)Test
 ADT_SOURCE     = $(ADT).cpp
 ADT_OBJECT     = $(ADT).o
 ADT_HEADER     = $(ADT).h

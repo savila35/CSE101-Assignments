@@ -1,3 +1,11 @@
+//------------------------------------------------------------------------------
+// Sebastian Avila
+// snavila
+// 2024 Winter CSE101 pa8
+// WordFrequency.cpp
+// Counts the frequency of words in given file using Dictionary ADT
+//------------------------------------------------------------------------------
+
 #include "Dictionary.h"
 #include <iostream>
 #include <fstream>
